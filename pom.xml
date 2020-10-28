@@ -14,7 +14,7 @@
     <inceptionYear>2019</inceptionYear>
 
     <properties>
-        <java.version>11</java.version>
+        <java.version>15</java.version>
         <module.build.sourceEncoding>UTF-8</module.build.sourceEncoding>
         <maven.javadoc.skip>true</maven.javadoc.skip>
 
@@ -50,6 +50,7 @@
         <module>altinn3-test-worker</module>
         <module>ske-sirius-worker</module>
         <module>toll-tvinn-worker</module>
+        <module>enhetsregisteret-worker</module>
     </modules>
 
     <profiles>
@@ -96,12 +97,12 @@
                     <plugin>
                         <groupId>org.sonarsource.scanner.maven</groupId>
                         <artifactId>sonar-maven-plugin</artifactId>
-                        <version>3.6.1.1688</version>
+                        <version>3.6.1.1746</version>
                     </plugin>
                     <plugin>
                         <groupId>org.jacoco</groupId>
                         <artifactId>jacoco-maven-plugin</artifactId>
-                        <version>0.8.5</version>
+                        <version>0.8.6</version>
                         <executions>
                             <execution>
                                 <id>prepare-agent</id>

@@ -10,11 +10,11 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>data-collector-toll-tvinn-worker</artifactId>
+    <artifactId>enhetsregisteret-worker</artifactId>
     <packaging>jar</packaging>
 
-    <name>Data Collector Samples Toll Tvinn Worker</name>
-    <description>Data Collector Samples Toll Tvinn Worker</description>
+    <name>Data Collector Samples Enhetsregisteret Worker</name>
+    <description>Data Collector Samples Enhetsregisteret Worker</description>
 
     <dependencies>
         <dependency>
@@ -38,13 +38,21 @@
         <dependency>
             <groupId>no.ssb.rawdata</groupId>
             <artifactId>rawdata-client-provider-gcs</artifactId>
-            <version>0.8</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.fasterxml.jackson.core</groupId>
-                    <artifactId>jackson-core</artifactId>
-                </exclusion>
-            </exclusions>
+            <version>0.9</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.xerial.snappy</groupId>
+            <artifactId>snappy-java</artifactId>
+            <version>1.1.7.7</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>2.10.2</version>
         </dependency>
 
         <dependency>
@@ -59,6 +67,14 @@
             <version>0.1-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>1.4.200</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
 </project>
