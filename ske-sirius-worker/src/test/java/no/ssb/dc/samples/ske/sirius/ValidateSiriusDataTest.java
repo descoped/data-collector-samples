@@ -137,6 +137,7 @@ public class ValidateSiriusDataTest {
         return hendelseListeMap;
     }
 
+    @Deprecated
     private void publishToRawdataContentStream(Path targetPath, RawdataClient rawdataClient, Map<String, Hendelse> hendelseListe) throws IOException {
         RawdataProducer producer = rawdataClient.producer(TOPIC);
         List<String> positions = new ArrayList<>();
@@ -151,19 +152,20 @@ public class ValidateSiriusDataTest {
                     byte[] manifestContent = Files.readAllBytes(Paths.get(manifestFilenamePath));
                     byte[] skattemeldingContent = Files.readAllBytes(file);
 
-                    RawdataMessage.Builder builder = producer.builder();
+                    RawdataMessage.Builder builder = RawdataMessage.builder();
                     builder.position(position);
                     builder.put("manifest.json", manifestContent);
                     builder.put("hendelse", hendelseListe.get(position).content);
                     builder.put("skattemelding", skattemeldingContent);
-                    producer.buffer(builder);
+                    producer.publish(builder.build());
 
                     positions.add(position);
                 }
                 return super.visitFile(file, attrs);
             }
         });
-        producer.publish(positions.stream().map(Integer::parseInt).sorted().map(String::valueOf).toArray(String[]::new));
+        String[] array = positions.stream().map(Integer::parseInt).sorted().map(String::valueOf).toArray(String[]::new);
+//        producer.publish(array);
     }
 
     private void persistRawdataStream(RawdataClient rawdataClient, Map<String, Hendelse> hendelseListe, TaxReturnRepository repository) throws Exception {
