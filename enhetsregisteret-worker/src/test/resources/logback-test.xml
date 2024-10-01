@@ -10,13 +10,13 @@
         </encoder>
     </appender>
 
-    <logger name="no.ssb.dc" level="TRACE"/>
-<!--    <logger name="no.ssb.dc.core.handler.PrefetchAlgorithm" level="NONE"/>-->
-<!--    <logger name="no.ssb.dc.core.handler.PaginationLifecycle" level="NONE"/>-->
-    <logger name="no.ssb.dc.content" level="TRACE"/>
-    <logger name="no.ssb.dc.content.provider.discarding.DiscardingContentStore" level="TRACE"/>
-    <logger name="no.ssb.dc.content.provider.discarding.DiscardingContentStreamBuffer" level="TRACE"/>
-    <logger name="no.ssb.rawdata.api" level="TRACE"/>
+    <logger name="io.descoped.dc" level="TRACE"/>
+    <!--    <logger name="io.descoped.dc.core.handler.PrefetchAlgorithm" level="NONE"/>-->
+    <!--    <logger name="io.descoped.dc.core.handler.PaginationLifecycle" level="NONE"/>-->
+    <logger name="io.descoped.dc.content" level="TRACE"/>
+    <logger name="io.descoped.dc.content.provider.discarding.DiscardingContentStore" level="TRACE"/>
+    <logger name="io.descoped.dc.content.provider.discarding.DiscardingContentStreamBuffer" level="TRACE"/>
+    <logger name="io.descoped.rawdata.api" level="TRACE"/>
 
     <root level="INFO">
         <appender-ref ref="STDOUT"/>
