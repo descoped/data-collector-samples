@@ -40,6 +40,7 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -137,10 +138,9 @@ public class ValidateSiriusDataTest {
         return hendelseListeMap;
     }
 
-    @Deprecated
     private void publishToRawdataContentStream(Path targetPath, RawdataClient rawdataClient, Map<String, Hendelse> hendelseListe) throws IOException {
         RawdataProducer producer = rawdataClient.producer(TOPIC);
-        List<String> positions = new ArrayList<>();
+        List<RawdataMessage> messageList = new ArrayList<>();
         Files.walkFileTree(targetPath, new SimpleFileVisitor<>() {
             @Override
             public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
@@ -157,15 +157,16 @@ public class ValidateSiriusDataTest {
                     builder.put("manifest.json", manifestContent);
                     builder.put("hendelse", hendelseListe.get(position).content);
                     builder.put("skattemelding", skattemeldingContent);
-                    producer.publish(builder.build());
 
-                    positions.add(position);
+                    // buffer message
+                    messageList.add(builder.build());
                 }
                 return super.visitFile(file, attrs);
             }
         });
-        String[] array = positions.stream().map(Integer::parseInt).sorted().map(String::valueOf).toArray(String[]::new);
-//        producer.publish(array);
+        // sort by position order and publish
+        messageList.sort(Comparator.comparing(m -> Integer.parseInt(m.position())));
+        producer.publish(messageList);
     }
 
     private void persistRawdataStream(RawdataClient rawdataClient, Map<String, Hendelse> hendelseListe, TaxReturnRepository repository) throws Exception {
