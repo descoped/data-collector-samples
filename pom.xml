@@ -121,10 +121,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.13.0</version>
                 <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
                     <release>${java.version}</release>
-                    <encoding>${module.build.sourceEncoding}</encoding>
+                    <encoding>${project.build.sourceEncoding}</encoding>
                     <meminitial>64m</meminitial>
                     <maxmem>512m</maxmem>
                 </configuration>
@@ -151,7 +149,6 @@
                 <version>3.5.0</version>
                 <configuration>
                        <argLine>
-                        --illegal-access=deny
                         -Xmx1500m
                     </argLine>
                 </configuration>
@@ -169,6 +166,9 @@
                         </goals>
                         <configuration>
                             <rules>
+                                <requireJavaVersion>
+                                    <version>${java.version}</version>
+                                </requireJavaVersion>
                                 <requireMavenVersion>
                                     <version>[3.6.3,4)</version>
                                 </requireMavenVersion>
