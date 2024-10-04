@@ -21,7 +21,7 @@
 
         <!-- project dependencies -->
         <data.collector.api.version>2.0.5-SNAPSHOT</data.collector.api.version>
-        <data.collector.server.base.version>2.0.2-SNAPSHOT</data.collector.server.base.version>
+        <data.collector.server.base.version>2.0.2</data.collector.server.base.version>
         <data.collector.testutils.version>2.0.2-SNAPSHOT</data.collector.testutils.version>
         <data.collector.content.stream.disarding.version>2.0.1-SNAPSHOT</data.collector.content.stream.disarding.version>
         <data.collector.content.stream.rawdata.version>2.0.2-SNAPSHOT</data.collector.content.stream.rawdata.version>
