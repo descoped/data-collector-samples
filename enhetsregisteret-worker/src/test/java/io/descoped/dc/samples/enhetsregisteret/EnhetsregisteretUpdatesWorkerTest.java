@@ -1,6 +1,7 @@
 package io.descoped.dc.samples.enhetsregisteret;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.descoped.config.DynamicConfiguration;
 import io.descoped.config.StoreBasedDynamicConfiguration;
 import io.descoped.dc.api.Builders;
@@ -16,9 +17,7 @@ import io.descoped.dc.api.util.CommonUtils;
 import io.descoped.dc.api.util.JsonParser;
 import io.descoped.dc.core.executor.Worker;
 import io.descoped.dc.core.handler.Queries;
-import io.descoped.rawdata.api.RawdataClient;
 import io.descoped.rawdata.api.RawdataClientInitializer;
-import io.descoped.rawdata.api.RawdataConsumer;
 import io.descoped.rawdata.api.RawdataMessage;
 import io.descoped.service.provider.api.ProviderConfigurator;
 import org.junit.jupiter.api.Disabled;
@@ -30,6 +29,8 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
+import java.util.stream.IntStream;
 
 import static io.descoped.dc.api.Builders.addContent;
 import static io.descoped.dc.api.Builders.console;
@@ -73,7 +74,7 @@ public class EnhetsregisteretUpdatesWorkerTest {
                     .header("accept", "application/json")
                     .variable("baseURL", "https://data.brreg.no/enhetsregisteret/api")
                     //.variable("offsetDate", "2020-10-05T00:00:00.000Z")
-                    .variable("offsetDate", "2021-03-11T00:00:00.000Z")
+                    .variable("offsetDate", "2024-10-01T12:00:00.000Z")
                     .variable("page", "0")
                     .variable("pageSize", "20")
             )
@@ -122,7 +123,7 @@ public class EnhetsregisteretUpdatesWorkerTest {
             )
             .function(get("event-document")
                     .url("${eventURL}")
-                    .validate(status().success(200).fail(400).fail(404).fail(500))
+                    .validate(status().success(200).fail(400).fail(404).fail(410).fail(500))
                     .pipe(addContent("${position}", "event"))
             );
 
@@ -131,7 +132,7 @@ public class EnhetsregisteretUpdatesWorkerTest {
     public void thatWorkerCollectEnhetsregisteret() throws InterruptedException {
         Worker.newBuilder()
                 .configuration(configuration.asMap())
-                .stopAtNumberOfIterations(5)
+                .stopAtNumberOfIterations(500)
                 .printConfiguration()
                 .specification(specificationBuilder)
                 .build()
@@ -140,16 +141,23 @@ public class EnhetsregisteretUpdatesWorkerTest {
 
     @Disabled
     @Test
-    void consumeLocalRawdataStore() {
-        try (RawdataClient client = ProviderConfigurator.configure(configuration.asMap(), configuration.evaluateToString("rawdata.client.provider"), RawdataClientInitializer.class)) {
-            try (RawdataConsumer consumer = client.consumer(configuration.evaluateToString("rawdata.topic"))) {
+    void consumeLocalRawdataStore() throws Exception {
+        int pos = 0;
+        JsonParser jsonParser = JsonParser.createJsonParser();
+        Function<byte[], String> toJson = (bytes) -> jsonParser.toPrettyJSON(jsonParser.fromJson(new String(bytes), ObjectNode.class));
+
+        try (var client = ProviderConfigurator.configure(configuration.asMap(), configuration.evaluateToString("rawdata.client.provider"), RawdataClientInitializer.class)) {
+            try (var consumer = client.consumer(configuration.evaluateToString("rawdata.topic"))) {
                 RawdataMessage message;
-                while ((message = consumer.receive(1, TimeUnit.SECONDS)) != null) {
-                    System.out.printf("position: %s%n--> %s%n", message.position(), new String(message.get("enhet")));
+                while ((message = consumer.receive(1, TimeUnit.SECONDS)) != null && pos++ < 5) {
+                    var buf = new StringBuffer();
+                    buf.append(IntStream.range(0, 80).mapToObj(i -> "-").reduce("", String::concat)).append("\n");
+                    buf.append("position: ").append(message.position()).append("\n");
+                    buf.append("feed-element:\n").append(toJson.apply(message.get("entry"))).append("\n");
+                    buf.append("enhet-document (see feed-element -> href):\n").append(toJson.apply(message.get("event"))).append("\n");
+                    System.out.print(buf);
                 }
             }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
         }
     }
 
