@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN" monitorInterval="0">
+    <Properties>
+        <Property name="LOG_PATTERN">%highlight{%d{HH:mm:ss.SSS} [%t] %-5level %logger{1} - %msg%n}{FATAL=red, ERROR=red, WARN=yellow, INFO=green, DEBUG=blue, TRACE=white}
+        </Property>
+    </Properties>
+
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT" follow="true">
+            <PatternLayout pattern="${LOG_PATTERN}" disableAnsi="false"/>
+        </Console>
+    </Appenders>
+
+    <Loggers>
+        <Logger name="io.descoped.dc" level="TRACE" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
+        <Logger name="io.descoped.dc.content" level="TRACE" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
+        <Logger name="io.descoped.dc.content.provider.discarding.DiscardingContentStore" level="TRACE"
+                additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
+        <Logger name="io.descoped.dc.content.provider.discarding.DiscardingContentStreamBuffer" level="OFF"
+                additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
+        <Logger name="io.descoped.dc.core.security.CertificateScanner" level="ERROR" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
+        <Logger name="io.descoped.dc.core.security.CertificateFactory" level="ERROR" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
+        <Logger name="io.descoped.dc.core.handler.PublishHandler" level="OFF" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
+        <Logger name="io.descoped.rawdata.api" level="TRACE" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
+
+        <Root level="INFO">
+            <AppenderRef ref="Console"/>
+        </Root>
+    </Loggers>
+</Configuration>
