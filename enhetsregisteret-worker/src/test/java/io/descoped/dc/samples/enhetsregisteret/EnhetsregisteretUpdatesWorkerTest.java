@@ -143,15 +143,17 @@ public class EnhetsregisteretUpdatesWorkerTest {
     @Test
     void consumeLocalRawdataStore() throws Exception {
         int pos = 0;
-        JsonParser jsonParser = JsonParser.createJsonParser();
+        var jsonParser = JsonParser.createJsonParser();
         Function<byte[], String> toJson = (bytes) -> jsonParser.toPrettyJSON(jsonParser.fromJson(new String(bytes), ObjectNode.class));
+        var dashLine = IntStream.range(0, 80).mapToObj(i -> "-").reduce("", String::concat);
 
         try (var client = ProviderConfigurator.configure(configuration.asMap(), configuration.evaluateToString("rawdata.client.provider"), RawdataClientInitializer.class)) {
             try (var consumer = client.consumer(configuration.evaluateToString("rawdata.topic"))) {
                 RawdataMessage message;
-                while ((message = consumer.receive(1, TimeUnit.SECONDS)) != null && pos++ < 5) {
+                while ((message = consumer.receive(1, TimeUnit.SECONDS)) != null) { //  && pos++ < 500
+                    pos++;
                     var buf = new StringBuffer();
-                    buf.append(IntStream.range(0, 80).mapToObj(i -> "-").reduce("", String::concat)).append("\n");
+                    buf.append(dashLine).append("\n");
                     buf.append("position: ").append(message.position()).append("\n");
                     buf.append("feed-element:\n").append(toJson.apply(message.get("entry"))).append("\n");
                     buf.append("enhet-document (see feed-element -> href):\n").append(toJson.apply(message.get("event"))).append("\n");
@@ -159,6 +161,7 @@ public class EnhetsregisteretUpdatesWorkerTest {
                 }
             }
         }
+        System.out.println("Pos count: " + pos);
     }
 
     @Disabled
@@ -223,6 +226,5 @@ public class EnhetsregisteretUpdatesWorkerTest {
 
         Files.writeString(targetPath.resolve("specs").resolve("enhetsregisteret-updates-spec.json"), specificationBuilder.serialize());
     }
-
 
 }
