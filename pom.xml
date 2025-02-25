@@ -45,7 +45,7 @@
         <rawdata.client.provider.psql.version>2.0.0</rawdata.client.provider.psql.version>
 
         <!-- other dependencies -->
-        <slf4j.version>2.0.16</slf4j.version>
+        <slf4j.version>2.0.17</slf4j.version>
         <log4j2.version>2.24.3</log4j2.version>
     </properties>
 
